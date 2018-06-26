@@ -1,0 +1,184 @@
+Kafka:
+
+https://svn.apache.org/repos/asf/kafka/site/082/quickstart.html ( Important link to understand the message passing)
+
+https://www.tutorialspoint.com/apache_kafka/apache_kafka_basic_operations.htm( tutorials point understanding of Kafka)
+http://www.agiratech.com/kafka-zookeeper-multi-node-cluster-setup/( multi node kafka cluster set up)
+
+http://www.agiratech.com/kafka-zookeeper-multi-node-cluster-setup/( it is in trying mode)
+
+
+
+High performance, real time messaging system
+
+Open source tool and part of Apache projects
+
+Kafka data model consists of messages and topics:
+	Messages- represent information such as lines in log file. a row of stock market data or an error in file system
+		- messages are grouped into categories called topics . Eg Log Message and Stock Message
+		- the processess that publish messages into a topic in Kafka are called producers
+		- the processess that receive messages in Kafka are known as consume
+		- the processess of servers within Kafka that process messages are brokers
+		- Kafka cluster consists of a set of broker that process the messages
+
+Producer- Messages- Kafka cluster( broker) - consumers
+
+Why Kafka:::
+
+In comparison to other messaging systems, Kafka has better throughput, built-in partitioning, replication and inherent fault-tolerance, which makes it a good fit for large-scale message processing applications
+
+
+Two types of Messaging system;
+
+Point -point-  In a point-to-point system, messages are persisted in a queue. One or more consumers can consume the messages in the queue, but a particular message can be consumed by a maximum of one consumer only
+
+
+Publish- Subscribe Messaging System:
+  In the publish-subscribe system, messages are persisted in a topic. Unlike point-to-point system, consumers can subscribe to one or more topic and consume all the messages in that topic. In the Publish-Subscribe system, message producers are called publishers and message consumers are called subscribers. A real-life example is Dish TV, which publishes different channels like sports, movies, music, etc., and anyone can subscribe to their own set of channels and get them whenever their subscribed channels are available
+
+
+Need for Kafka
+
+Kafka is a unified platform for handling all the real-time data feeds. Kafka supports low latency message delivery and gives guarantee for fault tolerance in the presence of machine failures. It has the ability to handle a large number of diverse consumers. Kafka is very fast, performs 2 million writes/sec. Kafka persists all data to the disk, which essentially means that all the writes go to the page cache of the OS (RAM). This makes it very efficient to transfer data from page cache to a network socket.
+
+Kafka installation:
+
+  Install java
+  Install Zookeeper-	sudo wget https://archive.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+  Untar it- sudo tar -xvzf zookeeper-3.4.6.tar.gz 
+  Create directory - mkdir data
+  Go to zoo.cfg and make changes for the directory created just above
+	i.e dataDir=/opt/zookeeper/data ( other things are same as per now, just make a copy of the file for conf change)
+  Then start the zookeeper server ./zkServer.sh start
+  Start the CI i.e ./zkCli.sh
+
+KAFKA INSTALLATION
+
+ sudo wget http://apache.claz.org/kafka/1.1.0/kafka_2.11-1.1.0.tgz
+ sudo tar -xvzf kafka_2.11-1.1.0.tgz
+ cd  cd kafka_2.11-1.1.0/
+
+For kafka server to start make sure your zookeeper is also started
+ sudo bin/kafka-server-start.sh config/server.properties 
+
+
+NOW STARTING THE CLUSTER SET UP ( SINGLE NODE SINGLE BROKER)
+
+> bin/zookeeper-server-start.sh config/zookeeper.properties
+
+> bin/kafka-server-start.sh config/server.properties ( if does not start then run the server as -daemon)
+
+........................................................................
+
+CREATE A TOPIC AND LIST THE TOPIC..
+
+> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+
+
+> bin/kafka-topics.sh --list --zookeeper localhost:2181
+  test
+
+
+SENDING MESSAGES BETWEEN PRODUCER AND CONSUMER
+  run the producer and type message that needs to be send to the consumer
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test 
+This is a message
+This is another message
+
+
+Now the consumer will print out the message
+
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic test --from-beginning
+This is a message
+This is another message
+
+
+SETTING UP MULTI-BROKER CLUSTER
+
+ cp config/server.properties config/server-1.properties 
+ cp config/server.properties config/server-2.properties
+
+Now edit these new files and set the following properties:
+
+ 
+config/server-1.properties:
+    broker.id=1
+    port=9093
+    log.dir=/tmp/kafka-logs-1
+ 
+config/server-2.properties:
+    broker.id=2
+    port=9094
+    log.dir=/tmp/kafka-logs-2
+
+bin/kafka-server-start.sh config/server-1.properties
+
+bin/kafka-server-start.sh config/server-2.properties 
+
+Now create a new topic with a replication factor of three:
+
+> bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 1 --topic my-replicated-topic
+
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+Topic:my-replicated-topic	PartitionCount:1	ReplicationFactor:3	Configs:
+	Topic: my-replicated-topic	Partition: 0	Leader: 1	Replicas: 1,2,0	Isr: 1,2,0
+
+Here is an explanation of output. The first line gives a summary of all the partitions, each additional line gives information about one partition. Since we have only one partition for this topic there is only one line.
+
+    "leader" is the node responsible for all reads and writes for the given partition. Each node will be the leader for a randomly selected portion of the partitions.
+    "replicas" is the list of nodes that replicate the log for this partition regardless of whether they are the leader or even if they are currently alive.
+    "isr" is the set of "in-sync" replicas. This is the subset of the replicas list that is currently alive and caught-up to the leader
+
+Lets publish the message to the new topic:
+
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-replicated-topic
+...
+my test message 1
+my test message 2
+
+
+
+Lets consume these messages
+
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic my-replicated-topic
+...
+my test message 1
+my test message 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
