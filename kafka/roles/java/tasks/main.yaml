@@ -1,0 +1,18 @@
+---
+- name: Install Packages
+  yum: name=wget state=installed
+
+- name: Check the state of Java
+  stat: path=jdk-8u161-linux-x64.rpm
+  register: java_exists
+
+- name: Download Java
+  command: wget http://18.216.243.34/extra-package/jdk-8u161-linux-x64.rpm
+  when: not java_exists.stat.exists
+
+- name: Install java
+  yum: name=jdk-8u161-linux-x64.rpm state=installed
+  when: not java_exists.stat.exists
+
+#- name: remove java file
+#  file: state=absent path=jdk-8u161-linux-x64.rpm

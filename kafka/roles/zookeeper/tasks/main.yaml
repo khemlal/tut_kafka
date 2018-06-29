@@ -1,0 +1,20 @@
+---
+- name: Check if zookeeper tar exists
+  stat: path=/opt/zookeeper-3.4.6.tar.gz
+  register: zookeeper_exists
+
+- name: Download the zookeeper binary
+  get_url: 
+    url: https://archive.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+    dest: /opt/
+  when: not zookeeper_exists.stat.exists
+
+- name: check if zookeeper file is there
+  stat: path=/opt/zookeeper-3.4.6
+  register: zookeeper_file_exists
+
+- name: Untar the given zookeeper file
+  unarchive: 
+    src: /opt/zookeeper-3.4.6.tar.gz
+    dest: /opt/
+  when: not zookeeper_file_exists.stat.exists
