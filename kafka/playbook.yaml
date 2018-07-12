@@ -1,9 +1,37 @@
 ---
 - hosts: all
-  become: yes
-  roles: 
-    - java
-    - kafka_install
-    - zookeeper
-    - hadoop
-  
+  become: True
+  gather_facts: yes
+  tasks:
+    - name: ip address
+      lineinfile:
+        dest: /etc/hosts 
+        line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}   {{ hostvars[item]['ansible_hostname'] }}"
+      with_items: "{{ groups['kafka-hosts'] }}" 
+#          - pan1
+
+
+     # when: inventory_hostname in groups['pan1']
+     # debug: var=hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+     # register: ip
+   # - debug:
+    #    var=ip
+    #- name: ansible hostname of 
+    #  when: inventory_hostname in groups['pan1']
+    #  shell: hostname
+    #  register: var_result
+
+   # - name: add the hostname
+   #   when: inventory_hostname in groups['pan1']
+   #   lineinfile:
+   #     dest: /etc/hosts
+
+ # - local_action: copy content={{ var_result.stdout }} dest=/etc/hosts
+  roles:
+   # - passwordless 
+   # - java
+   # - owner
+   # - kafka_install
+   # - kafka-server
+   # - zookeeper
+   # - hadoop 

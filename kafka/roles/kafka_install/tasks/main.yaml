@@ -1,24 +1,80 @@
 ---
 - name: Check if kafka already exists
-  stat: path=/opt/kafka_2.11-1.1.0.tgz
+  stat: path=/home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0.tgz
   register: kafka_tar_exists
 
 - name: Download kafka
   get_url:
     url: https://archive.apache.org/dist/kafka/1.1.0/kafka_2.11-1.1.0.tgz
-    dest: /opt/
+    dest: /home/dataops/keshab
   when: not kafka_tar_exists.stat.exists
 
 - name: Check if the Untar is done
-  become: yes
-  stat: path=/opt/kafka_2.11-1.1.0
+  stat: path=/home/dataops/keshab/kafka_2.11-1.1.0
   register: kafka_file_exists
 
 - name: Untar the binary file
+  become: yes
   unarchive: 
-    src: /opt/kafka_2.11-1.1.0.tgz
-    dest: /opt/
+    src: /home/dataops/keshab/kafka_2.11-1.1.0.tgz
+    dest: /home/dataops/keshab/
+    copy: no
   when: not kafka_file_exists.stat.exists
+
+- name: Fix the ownership of kafka directory
+  file: 
+    path: /home/dataops/keshab/kafka_2.11-1.1.0/
+    recurse: yes
+    state: directory
+    owner: dataops
+    group: dataops
+    mode: 0775
+- name: Creates the directory
+  file: 
+    path: /home/dataops/keshab/rdops/kafka/kafka-logs
+    state: directory
+    owner: dataops
+    group: dataops
+    mode: 0775
+    recurse: yes
+
+- name: Create the zookeeper directory
+  file: 
+    path: /home/dataops/keshab/zookeeper/data
+    state: directory
+    owner: dataops
+    group: dataops
+    mode: 0775
+    recurse: yes
+- name: Create the file myid
+  when: inventory_hostname in groups['pan1']
+  copy:
+    dest: /home/dataops/keshab/zookeeper/data/myid
+    content: "1"
+    group: dataops
+    owner: dataops
+    mode: 0775
+
+- name: Create the file myid on node 2
+  when: inventory_hostname in groups['pan2']
+  copy: 
+    dest: /home/dataops/keshab/zookeeper/data/myid
+    content: "2"
+    group: dataops
+    owner: dataops
+    mode: 0775
+
+- name: Create the file myid on node 2
+  when: inventory_hostname in groups['pan3']
+  copy:
+    dest: /home/dataops/keshab/zookeeper/data/myid
+    content: "3"
+    group: dataops
+    owner: dataops
+    mode: 0775
+
+
+    
 
 #- name: remove the tar package
 #  file: state=absent path=/opt/kafka_2.11-1.1.0.tgz

@@ -1,0 +1,27 @@
+---
+- name: Fix the ownership of directory
+#  file: dest=/home/dataops owner=dataops group=dataops mode=0775 recurse=yes
+  file:
+    path: /home/{{ ansible_ssh_user }}/keshab
+    state: directory
+    owner: dataops
+    group: dataops
+    recurse: yes
+    mode: 0775
+
+
+#- name: Edit the /etc/hosts file of all nodes
+#  become: True
+#  blockinfile:
+#    path: /etc/hosts
+#    block: |
+#      10.1.53.68  {{ var_result.stdout }}
+#      10.1.53.74  pan2
+#      10.1.53.63  pan3
+
+#- name: Add the hostnane
+#  become: yes
+#  when: inventory_hostname in groups['pan1']
+#  lineinfile:
+#    dest: /etc/hosts
+#    line: "{{ var_result.stdout }}"

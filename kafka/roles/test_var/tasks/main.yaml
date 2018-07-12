@@ -1,0 +1,5 @@
+---
+- name: printing the value of the variables
+  when: inventory_hostname in groups['pan1']
+  shell: cat {{ user }}
+

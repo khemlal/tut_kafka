@@ -14,14 +14,24 @@
 #blue.example.com
 #192.168.100.1
 #192.168.100.10
-
+10.1.53.68
 # Ex 2: A collection of hosts belonging to the 'webservers' group
+[kafka-hosts:children]
+pan1
+pan2
+pan3
 
-[webservers]
-#alpha.example.org
-#beta.example.org
+[pan1]
+10.1.53.68 ansible_ssh_user=dataops ansible_ssh_pass=dataops@123 ansible_sudo_pass=dataops@123
 
-10.1.53.116
+[pan2]
+10.1.53.74 ansible_ssh_user=dataops ansible_ssh_pass=dataops@123 ansible_sudo_pass=dataops@123
+
+[pan3]
+10.1.53.63 ansible_ssh_user=dataops ansible_ssh_pass=dataops@123 ansible_sudo_pass=dataops@123
+
+
+#10.1.53.68 ansible_ssh_user=rdops ansible_ssh_pass=rdops@123 ansible_sudo_pass=rdops@123
 # If you have multiple hosts following a pattern you can specify
 # them like this:
 

@@ -1,0 +1,66 @@
+---
+- name: Edit the server.properties file in kafka pan1
+  when: inventory_hostname in groups['pan1']
+  lineinfile:
+    backup: yes
+    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^broker.id', line: 'broker.id=1' }
+    - { regexp: '^#?listeners', line: 'listeners=PLAINTEXT://pan1:9092' }
+    - { regexp: '^#?advertised.listeners', line: 'advertised.listeners=PLAINTEXT://pan1:9092' }
+    
+- name: Edit the server.properties file in kafka pan2
+  when: inventory_hostname in groups['pan2']
+  lineinfile:
+    backup: yes
+    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^broker.id', line: 'broker.id=2' }
+    - { regexp: '^#?listeners', line: 'listeners=PLAINTEXT://pan2:9092' }
+    - { regexp: '^#?advertised.listeners', line: 'advertised.listeners=PLAINTEXT://pan2:9092' }
+
+- name: Edit the server.properties file in kafka pan3
+  when: inventory_hostname in groups['pan3']
+  lineinfile:
+    backup: yes
+    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+     - { regexp: '^broker.id', line: 'broker.id=3' }
+     - { regexp: '^#?listeners', line: 'listeners=PLAINTEXT://pan3:9092' }
+     - { regexp: '^#?advertised.listeners', line: 'advertised.listeners=PLAINTEXT://pan3:9092' }
+
+- name: Edit the server.properties file in all nodes
+  lineinfile:
+    backup: yes
+    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^log.dirs', line: 'log.dirs=/home/dataops/rdops/kafka/kafka-logs' }
+    - { regexp: '^offsets.topic.replication.factor', line: 'offsets.topic.replication.factor=3' }
+    - { regexp: '^transaction.state.log.replication.factor', line: 'transaction.state.log.replication.factor=3' }
+    - { regexp: '^transaction.state.log.min.isr', line: 'transaction.state.log.min.isr=3' }
+    - { regexp: '^#?zookeeper.connect', line: 'zookeeper.connect=pan1:2181,pan2:2181,pan3:2181' }
+
+- name: Insert the line at end of server.properties file
+  lineinfile:
+    path: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    line: delete.topic.enable=true
+
+- name: Start the Zookeeper server
+  shell: zkServer.sh start ~/home/dataops/keshab/zookeeper-3.4.6/conf/zookeeper.properties
+  args:
+    chdir: /home/dataops/keshab/zookeeper-3.4.6/bin/
+    executable: /bin/bash
+- name: Start the kafka brokers
+  shell: kafka-server-start.sh /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+  args:
+    chdir: /home/dataops/keshab/kafka_2.11-1.1.0/bin/
+    executable: /bin/bash
+  
