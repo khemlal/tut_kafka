@@ -1,43 +1,43 @@
 ---
 - name: Check if zookeeper tar exists
-  stat: path=/home/dataops/keshab/zookeeper-3.4.6.tar.gz
+  stat: path=/home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6.tar.gz
   register: zookeeper_exists
 
 - name: Download the zookeeper binary
   get_url: 
     url: https://archive.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
-    dest: /home/dataops/keshab/
+    dest: /home/{{ ansible_ssh_user }}/keshab/
   when: not zookeeper_exists.stat.exists
 
 - name: check if zookeeper file is there
-  stat: path=/home/dataops/keshab/zookeeper-3.4.6
+  stat: path=/home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6
   register: zookeeper_file_exists
 
 - name: Untar the given zookeeper file
   unarchive: 
-    src: /home/dataops/keshab/zookeeper-3.4.6.tar.gz
-    dest: /home/dataops/keshab
+    src: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6.tar.gz
+    dest: /home/{{ ansible_ssh_user }}/keshab
     copy: no
   when: not zookeeper_file_exists.stat.exists
 
 - name: create the zookeeper.properties file
   copy:
-    src: /home/dataops/keshab/zookeeper-3.4.6/conf/zoo_sample.cfg
-    dest: /home/dataops/keshab/zookeeper-3.4.6/conf/zookeeper.properties
+    src: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zoo_sample.cfg
+    dest: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zookeeper.properties
     remote_src: yes
-    owner: dataops
-    group: dataops
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
     mode: 0775
 
 - name: change the dataDir in zookeeper.properties
   lineinfile:
-    path: /home/dataops/keshab/zookeeper-3.4.6/conf/zookeeper.properties
-    regexp: '^dataDir='
-    line: 'dataDir=/home/dataops/keshab/zookeeper/data'
+    path: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zookeeper.properties
+    regexp: "^dataDir="
+    line: "dataDir=/home/{{ ansible_ssh_user }}/keshab/zookeeper/data"
 
 - name: Edit the zookeeper.properties file
   blockinfile:
-    path: /home/dataops/keshab/zookeeper-3.4.6/conf/zookeeper.properties
+    path: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zookeeper.properties
     block: |
       server.1=pan1:2888:3888
       server.2=pan2:2888:3888

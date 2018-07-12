@@ -2,12 +2,12 @@
 - hosts: all
   become: True
   gather_facts: yes
-  tasks:
-    - name: ip address
-      lineinfile:
-        dest: /etc/hosts 
-        line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}   {{ hostvars[item]['ansible_hostname'] }}"
-      with_items: "{{ groups['kafka-hosts'] }}" 
+#  tasks:
+#    - name: ip address
+#      lineinfile:
+#        dest: /etc/hosts 
+#        line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}   {{ hostvars[item]['ansible_hostname'] }}"
+#      with_items: "{{ groups['kafka-hosts'] }}" 
 #          - pan1
 
 
@@ -28,10 +28,11 @@
 
  # - local_action: copy content={{ var_result.stdout }} dest=/etc/hosts
   roles:
-   # - passwordless 
+    - file
+    - passwordless 
    # - java
-   # - owner
-   # - kafka_install
-   # - kafka-server
-   # - zookeeper
+    - owner
+    - kafka_install
+    - zookeeper
+    - kafka-server
    # - hadoop 

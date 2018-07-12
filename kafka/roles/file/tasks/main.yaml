@@ -1,0 +1,6 @@
+---
+- name: Edit the /etc/hosts file
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{ hostvars[item]['ansible_default_ipv4']['address'] }}   {{ hostvars[item]['ansible_hostname'] }}"
+  with_items: "{{ groups['kafka-hosts'] }}"

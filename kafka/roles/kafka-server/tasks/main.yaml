@@ -3,7 +3,7 @@
   when: inventory_hostname in groups['pan1']
   lineinfile:
     backup: yes
-    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    dest: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/config/server.properties
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
@@ -15,7 +15,7 @@
   when: inventory_hostname in groups['pan2']
   lineinfile:
     backup: yes
-    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    dest: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/config/server.properties
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
@@ -27,7 +27,7 @@
   when: inventory_hostname in groups['pan3']
   lineinfile:
     backup: yes
-    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    dest: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/config/server.properties
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
@@ -38,7 +38,7 @@
 - name: Edit the server.properties file in all nodes
   lineinfile:
     backup: yes
-    dest: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    dest: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/config/server.properties
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
   with_items:
@@ -50,17 +50,17 @@
 
 - name: Insert the line at end of server.properties file
   lineinfile:
-    path: /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+    path: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/config/server.properties
     line: delete.topic.enable=true
 
 - name: Start the Zookeeper server
-  shell: zkServer.sh start ~/home/dataops/keshab/zookeeper-3.4.6/conf/zookeeper.properties
+  shell: zkServer.sh start ~/home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zookeeper.properties
   args:
-    chdir: /home/dataops/keshab/zookeeper-3.4.6/bin/
+    chdir: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/bin/
     executable: /bin/bash
 - name: Start the kafka brokers
-  shell: kafka-server-start.sh /home/dataops/keshab/kafka_2.11-1.1.0/config/server.properties
+  shell: kafka-server-start.sh /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/config/server.properties
   args:
-    chdir: /home/dataops/keshab/kafka_2.11-1.1.0/bin/
+    chdir: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/bin/
     executable: /bin/bash
   
