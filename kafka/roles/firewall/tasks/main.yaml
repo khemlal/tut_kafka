@@ -1,0 +1,9 @@
+---
+- name: Stop the firewalld service
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False
+
+- name: Desable SELinux permanently
+  lineinfile: dest=/etc/sysconfig/selinux state=present create=no regexp='SELINUX=' line='SELINUX=disabled'

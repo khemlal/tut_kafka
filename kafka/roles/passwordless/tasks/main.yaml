@@ -1,9 +1,24 @@
 ---
+- name: create the directory .ssh 
+  file:
+    path: /home/{{ ansible_ssh_user }}/.ssh
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0700
+- name: Create the authorized keys file
+  file:
+    path: /home/{{ ansible_ssh_user }}/.ssh/authorized_keys
+    state: touch
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0600
+
 - name: Ensure SSH keys don't already exist
   stat: 
     path: /home/{{ ansible_ssh_user }}/.ssh/id_rsa
   become: yes
-  become:_user: dataops
+  become:_user: "{{ ansible_ssh_user }}"
   become_method: sudo
   register: ssh_key
   tags: 

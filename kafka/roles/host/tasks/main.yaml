@@ -1,0 +1,12 @@
+---
+- name: Change the hostname of node1
+  when: inventory_hostname in groups['pan1']
+  hostname: name=pan1
+  #tasks:
+- name: change the hostname of node2
+  when: inventory_hostname in groups['pan2']
+  hostname: name=pan2
+  #tasks:
+- name: Change the hostname of node3
+  when: inventory_hostname in groups['pan3']
+  hostname: name=pan3

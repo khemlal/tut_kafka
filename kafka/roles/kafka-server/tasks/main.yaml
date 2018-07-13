@@ -54,7 +54,7 @@
     line: delete.topic.enable=true
 
 - name: Start the Zookeeper server
-  shell: zkServer.sh start ~/home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zookeeper.properties
+  shell: zkServer.sh start /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/conf/zookeeper.properties
   args:
     chdir: /home/{{ ansible_ssh_user }}/keshab/zookeeper-3.4.6/bin/
     executable: /bin/bash
