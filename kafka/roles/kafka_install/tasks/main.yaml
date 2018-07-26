@@ -1,24 +1,34 @@
 ---
 - name: Check if kafka already exists
-  stat: path=/opt/kafka_2.11-1.1.0.tgz
+  stat: path= /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0.tgz
   register: kafka_tar_exists
 
 - name: Download kafka
   get_url:
     url: https://archive.apache.org/dist/kafka/1.1.0/kafka_2.11-1.1.0.tgz
-    dest: /opt/
+    dest: /home/{{ ansible_ssh_user }}/keshab
   when: not kafka_tar_exists.stat.exists
 
 - name: Check if the Untar is done
-  become: yes
-  stat: path=/opt/kafka_2.11-1.1.0
+  stat: path= /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0
   register: kafka_file_exists
 
 - name: Untar the binary file
-  unarchive: 
-    src: /opt/kafka_2.11-1.1.0.tgz
-    dest: /opt/
+  become: yes
+  unarchive:
+    src: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0.tgz
+    dest: /home/{{ ansible_ssh_user }}/keshab/
+    copy: no
   when: not kafka_file_exists.stat.exists
+
+- name: Fix the ownership of kafka directory
+  file:
+    path: /home/{{ ansible_ssh_user }}/keshab/kafka_2.11-1.1.0/
+    recurse: yes
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0700
 
 #- name: remove the tar package
 #  file: state=absent path=/opt/kafka_2.11-1.1.0.tgz

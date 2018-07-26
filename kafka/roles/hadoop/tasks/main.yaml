@@ -1,19 +1,31 @@
 ---
-- name: check if there is hadoop before
-  stat: path=/opt/hadoop-3.0.0.tar.gz
-  register: tar_exists
+- name: Check if hadoop already exists
+  stat: path= /home/{{ ansible_ssh_user }}/keshab/hadoop-3.0.0.tar.gz
+  register: hadoop_tar_exists
 
-- name: Download Hadoop binary
-  get_url:
+- name: Download hadoop
+  get_url: 
     url: https://archive.apache.org/dist/hadoop/core/hadoop-3.0.0/hadoop-3.0.0.tar.gz
-    dest: /opt/
-  when: not tar_exists.stat.exists
+    dest: /home/{{ ansible_ssh_user }}/keshab
+  when: not hadoop_tar_exists.stat.exists
 
-- name: check if hadoop file is already there
-  stat: path=/opt/hadoop-3.0.0
-  register: file_exists
+- name: Check if the Untar is done
+  stat: path= /home/{{ ansible_ssh_user }}/keshab/hadoop-3.0.0.tar.gz
+  register: hadoop_file_exists
 
-- name: Untar the downloaded hadoop file
+- name: Untar the binary file
   become: yes
-  command: tar -xvzf /opt/hadoop-3.0.0.tar.gz -C  /opt
-  when: not file_exists.stat.exists
+  unarchive:
+    src: /home/{{ ansible_ssh_user }}/keshab/hadoop-3.0.0.tar.gz
+    dest: /home/{{ ansible_ssh_user }}/keshab/
+    copy: no
+  when: not hadoop_file_exists.stat.exists
+
+- name: Fix the ownership of hadoop directory
+  file:
+    path: /home/{{ ansible_ssh_user }}/keshab/hadoop-3.0.0/
+    recurse: yes
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0700

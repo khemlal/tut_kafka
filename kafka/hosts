@@ -20,8 +20,6 @@
 [webservers]
 #alpha.example.org
 #beta.example.org
-
-10.1.53.116
 # If you have multiple hosts following a pattern you can specify
 # them like this:
 
@@ -40,4 +38,24 @@
 # leading 0s:
 
 #db-[99:101]-node.example.com
+[hadoop-hosts:children]
+pan1
+#pan2
+#pan3
+
+[pan1]
+10.1.53.117  ansible_ssh_user=dataops ansible_ssh_pass=dataops@123 ansible_sudo_pass=dataops@123
+
+#[pan2]
+#10.1.53.38 ansible_ssh_user=rdops ansible_ssh_pass=rdops@123 ansible_sudo_pass=rdops@123
+
+#[pan3]
+#10.1.53.39 ansible_ssh_user=rdops ansible_ssh_pass=rdops@123 ansible_sudo_pass=rdops@123
+
+
+
+
+
+
+
 
