@@ -100,7 +100,7 @@ SETTING UP MULTI-BROKER CLUSTER
 
 Now edit these new files and set the following properties:
 
- 
+ hhh
 config/server-1.properties:
     broker.id=1
     port=9093
